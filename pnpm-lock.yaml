@@ -38,6 +38,12 @@ dependencies:
   js-cookie:
     specifier: ^3.0.5
     version: 3.0.5
+  leaflet:
+    specifier: ^1.9.4
+    version: 1.9.4
+  leaflet.heat:
+    specifier: ^0.2.0
+    version: 0.2.0
   leaflet.marker.highlight:
     specifier: ^0.0.3
     version: 0.0.3
@@ -3919,8 +3925,16 @@ packages:
     resolution: {integrity: sha512-uMCj6+hZYDoffuvAJjFAPz56E9uoowFHmTkqRtRq5WyC5Q6Cu/fTZKNQpX/RbzChBYLLl3lo8CjFZBAZXq9qFg==}
     dev: true
 
+  /leaflet.heat@0.2.0:
+    resolution: {integrity: sha512-Cd5PbAA/rX3X3XKxfDoUGi9qp78FyhWYurFg3nsfhntcM/MCNK08pRkf4iEenO1KNqwVPKCmkyktjW3UD+h9bQ==, tarball: https://registry.npmmirror.com/leaflet.heat/-/leaflet.heat-0.2.0.tgz}
+    dev: false
+
   /leaflet.marker.highlight@0.0.3:
     resolution: {integrity: sha512-tCJ6jTCvi9L31d3IIvOFSyJDWNJwhGp1J9QTTxUTFxxz+JpDDFoWyvt4OQlCYZpQs9b+yPWCzeQVm9t8k5iHJg==, tarball: https://registry.npmmirror.com/leaflet.marker.highlight/-/leaflet.marker.highlight-0.0.3.tgz}
+    dev: false
+
+  /leaflet@1.9.4:
+    resolution: {integrity: sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==, tarball: https://registry.npmmirror.com/leaflet/-/leaflet-1.9.4.tgz}
     dev: false
 
   /levn@0.4.1:

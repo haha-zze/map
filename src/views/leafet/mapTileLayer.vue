@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import {loadCssJs} from './utils/loadLeftJsAndCss'
+import {createMap} from "@/views/leafet/utils/map";
 
 let baseLayers = reactive({})
 let instance = reactive({})
@@ -24,70 +24,65 @@ let instance = reactive({})
 
 
 onMounted(() => {
-  loadCssJs().then(_ => {
-    instance = new L.Map('map', {
-      center: new L.LatLng(39.86, 116.45),
-      zoom: 10
+  instance = createMap('map')
+
+  // TODO 创建基础图层
+  baseLayers = reactive({
+    'Sputnik': L.tileLayer('http://{s}.tiles.maps.sputnik.ru/{z}/{x}/{y}.png', {
+      maxZoom: 18
+    }),
+
+    "CartoDB Positron": L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+      maxZoom: 18
+    }),
+
+    // todo 设置默认加载：addTo(instance),
+    "OSM": L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18
+    }).addTo(instance),
+
+    "OpenTopoMap": L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18
+    }),
+
+    "高德路网": L.tileLayer('https://wprd01.is.autonavi.com/appmaptile?x={x}&y={y}&z={z}&lang=zh_cn&size=1&scl=2&style=8<ype=11', {
+      maxZoom: 18
+    }),
+
+    "高德影像": L.tileLayer('https://webst01.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}', {
+      maxZoom: 18
+    }),
+
+    "高德矢量": L.tileLayer('http://wprd04.is.autonavi.com/appmaptile?lang=zh_cn&size=1&style=7&x={x}&y={y}&z={z}', {
+      maxZoom: 18
+    }),
+
+    "谷歌矢量": L.tileLayer('http://mt2.google.cn/vt/lyrs=m&scale=2&hl=zh-CN&gl=cn&x={x}&y={y}&z={z}', {
+      maxZoom: 18
+    }),
+
+    "谷歌路网": L.tileLayer('https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}', {
+      maxZoom: 18
+    }),
+
+    "谷歌影像：": L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
+      maxZoom: 18
+    }),
+
+    "街景地图": L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18
     })
+  });
 
-    // TODO 创建基础图层
-    baseLayers = reactive({
-      'Sputnik': L.tileLayer('http://{s}.tiles.maps.sputnik.ru/{z}/{x}/{y}.png', {
-        maxZoom: 18
-      }),
+  // todo 创建一个图层控制器 提供给用户切换图层
+  var layerControl = L.control.layers(baseLayers, {}, {
+    // todo 指定图层控制器的位置
+    position: 'topleft',
+    // todo collapsed为布尔值 为true时代表图层控制器会以折叠的形式显示在地图上 只有用户点击时才展开 false时时自动展开
+    collapsed: false
+  }).addTo(instance)
 
-      "CartoDB Positron": L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-        maxZoom: 18
-      }),
-
-      // todo 设置默认加载：addTo(instance),
-      "OSM": L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18
-      }).addTo(instance),
-
-      "OpenTopoMap": L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18
-      }),
-
-      "高德路网": L.tileLayer('https://wprd01.is.autonavi.com/appmaptile?x={x}&y={y}&z={z}&lang=zh_cn&size=1&scl=2&style=8<ype=11', {
-        maxZoom: 18
-      }),
-
-      "高德影像": L.tileLayer('https://webst01.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}', {
-        maxZoom: 18
-      }),
-
-      "高德矢量": L.tileLayer('http://wprd04.is.autonavi.com/appmaptile?lang=zh_cn&size=1&style=7&x={x}&y={y}&z={z}', {
-        maxZoom: 18
-      }),
-
-      "谷歌矢量": L.tileLayer('http://mt2.google.cn/vt/lyrs=m&scale=2&hl=zh-CN&gl=cn&x={x}&y={y}&z={z}', {
-        maxZoom: 18
-      }),
-
-      "谷歌路网": L.tileLayer('https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}', {
-        maxZoom: 18
-      }),
-
-      "谷歌影像：": L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
-        maxZoom: 18
-      }),
-
-      "街景地图": L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18
-      })
-    });
-
-    // todo 创建一个图层控制器 提供给用户切换图层
-    var layerControl = L.control.layers(baseLayers, {}, {
-      // todo 指定图层控制器的位置
-      position: 'topleft',
-      // todo collapsed为布尔值 为true时代表图层控制器会以折叠的形式显示在地图上 只有用户点击时才展开 false时时自动展开
-      collapsed: false
-    }).addTo(instance)
-
-    drawerLayerGroup()
-  })
+  drawerLayerGroup()
 })
 
 /**

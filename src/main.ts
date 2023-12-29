@@ -8,6 +8,21 @@ import { MotionPlugin } from "@vueuse/motion";
 // import { useEcharts } from "@/plugins/echarts";
 import { injectResponsiveStorage } from "@/utils/responsive";
 
+// 引入全局的leaflet
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+window.L = L
+
+
+/* leaflet icon */
+delete L.Icon.Default.prototype._getIconUrl
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: ()=>import('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: ()=>import('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: ()=>import('leaflet/dist/images/marker-shadow.png'),
+})
+
+
 // import Table from "@pureadmin/table";
 // import PureDescriptions from "@pureadmin/descriptions";
 

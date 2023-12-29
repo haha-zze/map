@@ -1,24 +1,23 @@
 <template>
-  <div class="shapeDrawer-container">
-    <map-view @post-map-instance="getMapInstance"/>
-  </div>
+  <div id="map"></div>
 </template>
 
-<script setup>
-import MapView from "@/views/leafet/components/mapView.vue";
+<script setup lang="ts">
+import {createMap,createTitleLayer} from './utils/map'
 let instace = reactive({})
-let marker = ref(null)
 /**
  * 获取地图实例
  * @param mapInstace
  */
-const getMapInstance = (mapInstace) => {
-  instace = mapInstace
+
+onMounted(()=>{
+  instace = createMap('map')
+  createTitleLayer(instace)
   drawerCircel()
   drawerLine()
   drawerGon()
   addMarker()
-}
+})
 
 /**
  * 绘制圆形

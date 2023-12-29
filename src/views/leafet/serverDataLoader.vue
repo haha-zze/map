@@ -1,12 +1,9 @@
 <template>
-  <div class="mapTileLayer-container">
-    <div id="map"></div>
-  </div>
+  <div id="map"></div>
 </template>
 
 <script setup>
-import {loadCssJs} from './utils/loadLeftJsAndCss'
-
+import {createMap, createTitleLayer} from "@/views/leafet/utils/map";
 let baseLayers = reactive({})
 let instance = reactive({})
 
@@ -24,60 +21,45 @@ let instance = reactive({})
 // };
 
 onMounted(() => {
-  loadCssJs().then(_ => {
-    instance = new L.Map('map', {
-      center: new L.LatLng(39.86, 116.45),
-      zoom: 10
-    })
+  instance = createMap('map')
+  createTitleLayer(instance)
+  //todo 加载北京市的gelJSON的数据
+  load_geojson().then(geoJSON => {
+    const myStyle = {
+      "color": "green",
+      "weight": 3,
+      "opacity": 0.5,
+    };
+    // leaflet 加载 GeoJSON 统一默认使用 WGS84（有的说法是只能读取经纬度），若要使用投影坐标系要借助Proj4Leaflet  [链接]，或设置L.geoJson的coordsToLatLng属性
 
-    // 渲染图层
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18
-    }).addTo(instance);
-
-
-    //todo 加载北京市的gelJSON的数据
-    load_geojson().then(geoJSON=>{
-      const myStyle = {
-        "color": "green",
-        "weight": 3,
-        "opacity": 0.5,
-      };
-      // leaflet 加载 GeoJSON 统一默认使用 WGS84（有的说法是只能读取经纬度），若要使用投影坐标系要借助Proj4Leaflet  [链接]，或设置L.geoJson的coordsToLatLng属性
-
-      /* 第一种加载形式*/
-      L.geoJSON(geoJSON, {style: myStyle}).addTo(instance)
-      /* 第二种加载形式*/
-      // L.geoJson(geoJSON, {
-      //   coordsToLatLng: coords => {
-      //     console.log(coords,"coords",L.CRS,L.CRS.EPSG3857)
-      //     //mark project 地理转平面坐标，unproject 平面转地理坐标
-      //     return L.CRS.EPSG3857.unproject(L.point(coords[0], coords[1]));
-      //   }
-      // }).addTo(instance)
-    })
+    /* 第一种加载形式*/
+    L.geoJSON(geoJSON, {style: myStyle}).addTo(instance)
+    /* 第二种加载形式*/
+    // L.geoJson(geoJSON, {
+    //   coordsToLatLng: coords => {
+    //     console.log(coords,"coords",L.CRS,L.CRS.EPSG3857)
+    //     //mark project 地理转平面坐标，unproject 平面转地理坐标
+    //     return L.CRS.EPSG3857.unproject(L.point(coords[0], coords[1]));
+    //   }
+    // }).addTo(instance)
   })
 })
 
- // todo 本地json数据 数据来源：https://datav.aliyun.com/portal/school/atlas/area_selector#&lat=30.332329214580188&lng=106.72278672066881&zoom=3.5
- const load_geojson = async () => {
+// todo 本地json数据 数据来源：https://datav.aliyun.com/portal/school/atlas/area_selector#&lat=30.332329214580188&lng=106.72278672066881&zoom=3.5
+const load_geojson = async () => {
   let url = '/src/views/leafet/json/bgGeoJson.json';
   const response = await fetch(url);
   const json_obj = await response.json();
-  console.log(json_obj,"json_obj");
+  console.log(json_obj, "json_obj");
   return json_obj;
 }
 
 </script>
 
 <style lang="scss" scoped>
-.mapTileLayer-container {
+#map {
+  width: 100%;
   height: 100%;
-
-  #map {
-    width: 100%;
-    height: 100%;
-  }
 }
 </style>
 

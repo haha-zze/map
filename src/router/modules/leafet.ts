@@ -48,5 +48,13 @@ export default {
         title: "加载图标",
       }
     },
+    {
+      path: "/leafet/heatmapComponent",
+      name: "leafet-heatmapComponent",
+      component: () => import("@/views/leafet/heatmapComponent.vue"),
+      meta: {
+        title: "热力图",
+      }
+    },
   ]
 } as RouteConfigsTable;
