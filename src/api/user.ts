@@ -2,8 +2,8 @@ import { http } from "@/utils/http";
 
 export type RegResult = {
   success: boolean;
-  data: object
-}
+  data: object;
+};
 
 export type UserResult = {
   success: boolean;
@@ -41,13 +41,15 @@ export const getLogin = (data?: object) => {
 /** 注册 **/
 export const getReg = (data?: object) => {
   return http.request<RegResult>("post", "/user/register", { data });
-}
+};
 
 /** 刷新token */
 export const refreshTokenApi = (data?: object) => {
-  return http.request<RefreshTokenResult>("post", "/user/refreshToken", { data });
+  return http.request<RefreshTokenResult>("post", "/user/refreshToken", {
+    data
+  });
 };
 
 export const getUserRoutes = () => {
-  return http.request("post", "/user/getAsyncRoutes", {  });
+  return http.request("post", "/user/getAsyncRoutes");
 };
