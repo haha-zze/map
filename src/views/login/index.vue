@@ -37,22 +37,48 @@ const ruleForm = reactive({
   password: "admin123"
 });
 
-const onLogin = async (formEl: FormInstance | undefined) => {
+const onLoginOrReg = async (formEl: FormInstance | undefined,type:string) => {
   loading.value = true;
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
-      useUserStoreHook()
-        .loginByUsername({ username: ruleForm.username, password: "admin123" })
-        .then(res => {
-          if (res.success) {
-            // 获取后端路由
-            initRouter().then(() => {
-              router.push(getTopMenu(true).path);
-              message("登录成功", { type: "success" });
-            });
+      // 登录
+      if(type === 'login') {
+        useUserStoreHook()
+          .loginByUsername({ username: ruleForm.username, password: "admin123" })
+          .then(res => {
+            console.log(res,"res11111")
+            if (res.success) {
+              loading.value = false;
+              console.log("执行了initrouter")
+              initRouter().then(() => {
+                console.log("执行initrouter结束")
+                console.log(getTopMenu(true).path,"第一个路由")
+                router.push(getTopMenu(true).path);
+                message("登录成功", { type: "success" });
+              });
+            } else {
+              message("登陆失败",{ type: "error" })
+            }
+          });
+      } else {
+        // 注册
+        useUserStoreHook().register({ username: ruleForm.username, password: ruleForm.password }).then(res=>{
+          console.log(res,"注册结果")
+          if(res.success) {
+            message("注册成功,请登录", { type: "success" });
+            activeName.value = 'login'
+          } else {
+            message("注册失败，请稍后重试", { type: "error" })
           }
-        });
+        }).catch(err=>{
+          console.log(err)
+          message("注册失败，请稍后重试", { type: "error" })
+        }).finally(()=>{
+          loading.value = false
+        })
+      }
+
     } else {
       loading.value = false;
       return fields;
@@ -63,9 +89,12 @@ const onLogin = async (formEl: FormInstance | undefined) => {
 /** 使用公共函数，避免`removeEventListener`失效 */
 function onkeypress({ code }: KeyboardEvent) {
   if (code === "Enter") {
-    onLogin(ruleFormRef.value);
+    onLoginOrReg(ruleFormRef.value,activeName.value);
   }
 }
+
+const activeName = ref('login')
+
 
 onMounted(() => {
   window.document.addEventListener("keypress", onkeypress);
@@ -100,56 +129,119 @@ onBeforeUnmount(() => {
             <h2 class="outline-none">{{ title }}</h2>
           </Motion>
 
-          <el-form
-            ref="ruleFormRef"
-            :model="ruleForm"
-            :rules="loginRules"
-            size="large"
+
+          <el-tabs
+            v-model="activeName"
+            type="card"
+            class="demo-tabs"
           >
-            <Motion :delay="100">
-              <el-form-item
-                :rules="[
+            <el-tab-pane label="登录" name="login">
+              <el-form
+                ref="ruleFormRef"
+                :model="ruleForm"
+                :rules="loginRules"
+                size="large"
+              >
+                <Motion :delay="100">
+                  <el-form-item
+                    :rules="[
                   {
                     required: true,
                     message: '请输入账号',
                     trigger: 'blur'
                   }
                 ]"
-                prop="username"
-              >
-                <el-input
-                  clearable
-                  v-model="ruleForm.username"
-                  placeholder="账号"
-                  :prefix-icon="useRenderIcon(User)"
-                />
-              </el-form-item>
-            </Motion>
+                    prop="username"
+                  >
+                    <el-input
+                      clearable
+                      v-model="ruleForm.username"
+                      placeholder="账号"
+                      :prefix-icon="useRenderIcon(User)"
+                    />
+                  </el-form-item>
+                </Motion>
 
-            <Motion :delay="150">
-              <el-form-item prop="password">
-                <el-input
-                  clearable
-                  show-password
-                  v-model="ruleForm.password"
-                  placeholder="密码"
-                  :prefix-icon="useRenderIcon(Lock)"
-                />
-              </el-form-item>
-            </Motion>
+                <Motion :delay="150">
+                  <el-form-item prop="password">
+                    <el-input
+                      clearable
+                      show-password
+                      v-model="ruleForm.password"
+                      placeholder="密码"
+                      :prefix-icon="useRenderIcon(Lock)"
+                    />
+                  </el-form-item>
+                </Motion>
 
-            <Motion :delay="250">
-              <el-button
-                class="w-full mt-4"
-                size="default"
-                type="primary"
-                :loading="loading"
-                @click="onLogin(ruleFormRef)"
+                <Motion :delay="250">
+                  <el-button
+                    class="w-full mt-4"
+                    size="default"
+                    type="primary"
+                    :loading="loading"
+                    @click="onLoginOrReg(ruleFormRef,'login')"
+                  >
+                    登录
+                  </el-button>
+                </Motion>
+              </el-form>
+            </el-tab-pane>
+            <el-tab-pane label="注册" name="reg">
+              <el-form
+                ref="ruleFormRef"
+                :model="ruleForm"
+                :rules="loginRules"
+                size="large"
               >
-                登录
-              </el-button>
-            </Motion>
-          </el-form>
+                <Motion :delay="100">
+                  <el-form-item
+                    :rules="[
+                  {
+                    required: true,
+                    message: '请输入账号',
+                    trigger: 'blur'
+                  }
+                ]"
+                    prop="username"
+                  >
+                    <el-input
+                      clearable
+                      v-model="ruleForm.username"
+                      placeholder="账号"
+                      :prefix-icon="useRenderIcon(User)"
+                    />
+                  </el-form-item>
+                </Motion>
+
+                <Motion :delay="150">
+                  <el-form-item prop="password">
+                    <el-input
+                      clearable
+                      show-password
+                      v-model="ruleForm.password"
+                      placeholder="密码"
+                      :prefix-icon="useRenderIcon(Lock)"
+                    />
+                  </el-form-item>
+                </Motion>
+
+                <Motion :delay="250">
+                  <el-button
+                    class="w-full mt-4"
+                    size="default"
+                    type="primary"
+                    :loading="loading"
+                    @click="onLoginOrReg(ruleFormRef,'reg')"
+                  >
+                    注册
+                  </el-button>
+                </Motion>
+              </el-form>
+            </el-tab-pane>
+          </el-tabs>
+
+
         </div>
       </div>
     </div>

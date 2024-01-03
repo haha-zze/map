@@ -28,6 +28,7 @@ const modulesRoutes = import.meta.glob("/src/views/**/*.{vue,tsx}");
 
 // 动态路由
 import { getAsyncRoutes } from "@/api/routes";
+import { getUserRoutes } from "@/api/user";
 
 function handRank(routeInfo: any) {
   const { name, path, parentId, meta } = routeInfo;
@@ -183,32 +184,34 @@ function handleAsyncRoutes(routeList) {
 
 /** 初始化路由（`new Promise` 写法防止在异步请求中造成无限循环）*/
 function initRouter() {
-  if (getConfig()?.CachingAsyncRoutes) {
-    // 开启动态路由缓存本地sessionStorage
-    const key = "async-routes";
-    const asyncRouteList = storageSession().getItem(key) as any;
-    if (asyncRouteList && asyncRouteList?.length > 0) {
-      return new Promise(resolve => {
-        handleAsyncRoutes(asyncRouteList);
-        resolve(router);
-      });
-    } else {
-      return new Promise(resolve => {
-        getAsyncRoutes().then(({ data }) => {
-          handleAsyncRoutes(cloneDeep(data));
-          storageSession().setItem(key, data);
-          resolve(router);
-        });
-      });
-    }
-  } else {
+  // if (getConfig()?.CachingAsyncRoutes) {
+  //   // 开启动态路由缓存本地sessionStorage
+  //   const key = "async-routes";
+  //   const asyncRouteList = storageSession().getItem(key) as any;
+  //   if (asyncRouteList && asyncRouteList?.length > 0) {
+  //     return new Promise(resolve => {
+  //       handleAsyncRoutes(asyncRouteList);
+  //       resolve(router);
+  //     });
+  //   } else {
+  //     return new Promise(resolve => {
+  //       getAsyncRoutes().then(({ data }) => {
+  //         handleAsyncRoutes(cloneDeep(data));
+  //         storageSession().setItem(key, data);
+  //         resolve(router);
+  //       });
+  //     });
+  //   }
+  // } else {
     return new Promise(resolve => {
-      getAsyncRoutes().then(({ data }) => {
+      getUserRoutes().then(({ data }) => {
+        alert('请求完成')
+        console.log("请求路由接口完成",data)
         handleAsyncRoutes(cloneDeep(data));
         resolve(router);
       });
     });
-  }
+  // }
 }
 
 /**

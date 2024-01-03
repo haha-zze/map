@@ -29,7 +29,8 @@ const __APP_INFO__ = {
 export default ({ command, mode }: ConfigEnv): UserConfigExport => {
   const { VITE_CDN, VITE_PORT, VITE_COMPRESSION, VITE_PUBLIC_PATH } =
     warpperEnv(loadEnv(mode, root));
-  console.log(VITE_PUBLIC_PATH,"VITE_PUBLIC_PATH")
+  const env = loadEnv(mode, process.cwd());
+  console.log(VITE_PUBLIC_PATH,"VITE_PUBLIC_PATH",env)
   return {
     base: VITE_PUBLIC_PATH,
     root,
@@ -42,9 +43,14 @@ export default ({ command, mode }: ConfigEnv): UserConfigExport => {
       https: false,
       // 端口号
       port: VITE_PORT,
-      host: "0.0.0.0",
+      // host: "0.0.0.0",
       // 本地跨域代理 https://cn.vitejs.dev/config/server-options.html#server-proxy
-      proxy: {}
+      proxy: {
+        [env.VITE_APP_API_BASE_URL]: {
+          target: env.VITE_APP_API_SERVER_URL,
+          rewrite: path => path.replace(/^\/api/, '') // 设置重写路径, 去掉path
+         }
+      }
     },
     plugins: getPluginsList(command, VITE_CDN, VITE_COMPRESSION),
     // https://cn.vitejs.dev/config/dep-optimization-options.html#dep-optimization-options

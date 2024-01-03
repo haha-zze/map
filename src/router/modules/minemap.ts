@@ -173,6 +173,31 @@ export default {
       ]
     },
     {
+      path: 'minemap/customStyle',
+      name: 'minemap-customStyle',
+      meta: {
+        title: '自定义地图样式'
+      },
+      children: [
+        {
+          path: '/minemap/customStyle/customStyle',
+          name: 'minemap-customStyle-customStyle',
+          component: () => import('@/views/minemap/customStyle/customStyle.vue'),
+          meta: {
+            title: '自定义地图样式'
+          }
+        },
+        {
+          path: '/minemap/customStyle/baseMapToggle',
+          name: 'minemap-customStyle-baseMapToggle',
+          component: () => import('@/views/minemap/customStyle/baseMapToggle.vue'),
+          meta: {
+            title: '底图样式切换'
+          }
+        }
+      ]
+    },
+    {
       path: 'minemap/overlay',
       name: 'minemap-overlay',
       meta: {
@@ -188,11 +213,11 @@ export default {
           }
         },
         {
-          path: '/minemap/overlay/pointAddAndDelete',
-          name: 'minemap-overlay-pointAddAndDelete',
-          component: () => import("@/views/minemap/overlay/pointAddAndDelete.vue"),
+          path: '/minemap/overlay/customPointContent',
+          name: 'minemap-overlay-customPointContent',
+          component: () => import("@/views/minemap/overlay/customPointContent.vue"),
           meta: {
-            title: '点标记1'
+            title: '自定义点标记内容'
           }
         }
       ]

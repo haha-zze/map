@@ -6,5 +6,6 @@ type Result = {
 };
 
 export const getAsyncRoutes = () => {
-  return http.request<Result>("get", "/getAsyncRoutes");
+  alert('请求了')
+  return http.request<Result>("get", "/user/getAsyncRoutes");
 };

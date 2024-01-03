@@ -1,5 +1,10 @@
 import { http } from "@/utils/http";
 
+export type RegResult = {
+  success: boolean;
+  data: object
+}
+
 export type UserResult = {
   success: boolean;
   data: {
@@ -12,7 +17,7 @@ export type UserResult = {
     /** 用于调用刷新`accessToken`的接口时所需的`token` */
     refreshToken: string;
     /** `accessToken`的过期时间（格式'xxxx/xx/xx xx:xx:xx'） */
-    expires: Date;
+    expires: number;
   };
 };
 
@@ -24,16 +29,25 @@ export type RefreshTokenResult = {
     /** 用于调用刷新`accessToken`的接口时所需的`token` */
     refreshToken: string;
     /** `accessToken`的过期时间（格式'xxxx/xx/xx xx:xx:xx'） */
-    expires: Date;
+    expires: number;
   };
 };
 
 /** 登录 */
 export const getLogin = (data?: object) => {
-  return http.request<UserResult>("post", "/login", { data });
+  return http.request<UserResult>("post", "/user/login", { data });
 };
+
+/** 注册 **/
+export const getReg = (data?: object) => {
+  return http.request<RegResult>("post", "/user/register", { data });
+}
 
 /** 刷新token */
 export const refreshTokenApi = (data?: object) => {
-  return http.request<RefreshTokenResult>("post", "/refreshToken", { data });
+  return http.request<RefreshTokenResult>("post", "/user/refreshToken", { data });
+};
+
+export const getUserRoutes = () => {
+  return http.request("post", "/user/getAsyncRoutes", {  });
 };

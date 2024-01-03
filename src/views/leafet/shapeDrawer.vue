@@ -4,15 +4,15 @@
 
 <script setup lang="ts">
 import {createMap,createTitleLayer} from './utils/map'
-let instace = reactive({})
+let instance = reactive({})
 /**
  * 获取地图实例
  * @param mapInstace
  */
 
 onMounted(()=>{
-  instace = createMap('map')
-  createTitleLayer(instace)
+  instance = createMap('map')
+  createTitleLayer(instance)
   drawerCircel()
   drawerLine()
   drawerGon()
@@ -28,7 +28,7 @@ const drawerCircel = () => {
     fillColor: 'green',
     fillOpacity: 0.5,
     radius: 500
-  }).addTo(instace);
+  }).addTo(instance);
 }
 
 /**
