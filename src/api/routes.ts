@@ -5,7 +5,6 @@ type Result = {
   data: Array<any>;
 };
 
-export const getAsyncRoutes = () => {
-  alert('请求了')
-  return http.request<Result>("get", "/user/getAsyncRoutes");
+export const getAsyncRoutes = (data?: object) => {
+  return http.request<Result>("get", "/user/getAsyncRoutes", { data });
 };

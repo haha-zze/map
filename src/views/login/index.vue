@@ -37,48 +37,57 @@ const ruleForm = reactive({
   password: "admin123"
 });
 
-const onLoginOrReg = async (formEl: FormInstance | undefined,type:string) => {
+const onLoginOrReg = async (formEl: FormInstance | undefined, type: string) => {
   loading.value = true;
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
       // 登录
-      if(type === 'login') {
+      if (type === "login") {
         useUserStoreHook()
-          .loginByUsername({ username: ruleForm.username, password: "admin123" })
+          .loginByUsername({
+            username: ruleForm.username,
+            password: "admin123"
+          })
           .then(res => {
-            console.log(res,"res11111")
             if (res.success) {
               loading.value = false;
-              console.log("执行了initrouter")
-              initRouter().then(() => {
-                console.log("执行initrouter结束")
-                console.log(getTopMenu(true).path,"第一个路由")
-                router.push(getTopMenu(true).path);
-                message("登录成功", { type: "success" });
-              });
+              initRouter()
+                .then(() => {
+                  router.push(getTopMenu(true).path);
+                  message("登录成功", { type: "success" });
+                })
+                .catch(err => {
+                  console.log(err, "initRouter请求出错");
+                });
             } else {
-              message("登陆失败",{ type: "error" })
+              message("登陆失败", { type: "error" });
             }
           });
       } else {
         // 注册
-        useUserStoreHook().register({ username: ruleForm.username, password: ruleForm.password }).then(res=>{
-          console.log(res,"注册结果")
-          if(res.success) {
-            message("注册成功,请登录", { type: "success" });
-            activeName.value = 'login'
-          } else {
-            message("注册失败，请稍后重试", { type: "error" })
-          }
-        }).catch(err=>{
-          console.log(err)
-          message("注册失败，请稍后重试", { type: "error" })
-        }).finally(()=>{
-          loading.value = false
-        })
+        useUserStoreHook()
+          .register({
+            username: ruleForm.username,
+            password: ruleForm.password
+          })
+          .then(res => {
+            console.log(res, "注册结果");
+            if (res.success) {
+              message("注册成功,请登录", { type: "success" });
+              activeName.value = "login";
+            } else {
+              message("注册失败，请稍后重试", { type: "error" });
+            }
+          })
+          .catch(err => {
+            console.log(err);
+            message("注册失败，请稍后重试", { type: "error" });
+          })
+          .finally(() => {
+            loading.value = false;
+          });
       }
-
     } else {
       loading.value = false;
       return fields;
@@ -89,12 +98,11 @@ const onLoginOrReg = async (formEl: FormInstance | undefined,type:string) => {
 /** 使用公共函数，避免`removeEventListener`失效 */
 function onkeypress({ code }: KeyboardEvent) {
   if (code === "Enter") {
-    onLoginOrReg(ruleFormRef.value,activeName.value);
+    onLoginOrReg(ruleFormRef.value, activeName.value);
   }
 }
 
-const activeName = ref('login')
-
+const activeName = ref("login");
 
 onMounted(() => {
   window.document.addEventListener("keypress", onkeypress);
@@ -129,12 +137,7 @@ onBeforeUnmount(() => {
             <h2 class="outline-none">{{ title }}</h2>
           </Motion>
 
-
-          <el-tabs
-            v-model="activeName"
-            type="card"
-            class="demo-tabs"
-          >
+          <el-tabs v-model="activeName" type="card" class="demo-tabs">
             <el-tab-pane label="登录" name="login">
               <el-form
                 ref="ruleFormRef"
@@ -145,12 +148,12 @@ onBeforeUnmount(() => {
                 <Motion :delay="100">
                   <el-form-item
                     :rules="[
-                  {
-                    required: true,
-                    message: '请输入账号',
-                    trigger: 'blur'
-                  }
-                ]"
+                      {
+                        required: true,
+                        message: '请输入账号',
+                        trigger: 'blur'
+                      }
+                    ]"
                     prop="username"
                   >
                     <el-input
@@ -180,7 +183,7 @@ onBeforeUnmount(() => {
                     size="default"
                     type="primary"
                     :loading="loading"
-                    @click="onLoginOrReg(ruleFormRef,'login')"
+                    @click="onLoginOrReg(ruleFormRef, 'login')"
                   >
                     登录
                   </el-button>
@@ -197,12 +200,12 @@ onBeforeUnmount(() => {
                 <Motion :delay="100">
                   <el-form-item
                     :rules="[
-                  {
-                    required: true,
-                    message: '请输入账号',
-                    trigger: 'blur'
-                  }
-                ]"
+                      {
+                        required: true,
+                        message: '请输入账号',
+                        trigger: 'blur'
+                      }
+                    ]"
                     prop="username"
                   >
                     <el-input
@@ -232,7 +235,7 @@ onBeforeUnmount(() => {
                     size="default"
                     type="primary"
                     :loading="loading"
-                    @click="onLoginOrReg(ruleFormRef,'reg')"
+                    @click="onLoginOrReg(ruleFormRef, 'reg')"
                   >
                     注册
                   </el-button>
@@ -240,8 +243,6 @@ onBeforeUnmount(() => {
               </el-form>
             </el-tab-pane>
           </el-tabs>
-
-
         </div>
       </div>
     </div>

@@ -99,7 +99,6 @@ export function useDataThemeChange() {
     dataTheme,
     layoutTheme,
     themeColors,
-
     dataThemeChange,
     setEpThemeColor,
     setLayoutThemeColor

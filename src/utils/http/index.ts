@@ -14,7 +14,7 @@ import NProgress from "../progress";
 import { getToken, formatToken } from "@/utils/auth";
 import { useUserStoreHook } from "@/store/modules/user";
 
-console.log(import.meta.env,"import.meta.env.VITE_SERVER_URL")
+console.log(import.meta.env, "import.meta.env.VITE_SERVER_URL");
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
   // 请求超时时间
@@ -24,7 +24,7 @@ const defaultConfig: AxiosRequestConfig = {
     "Content-Type": "application/json",
     "X-Requested-With": "XMLHttpRequest"
   },
-  baseURL:import.meta.env.VITE_APP_API_BASE_URL,  //设置基础请求路径
+  baseURL: import.meta.env.VITE_APP_API_BASE_URL, //设置基础请求路径
   // 数组格式参数序列化（https://github.com/axios/axios/issues/5142）
   paramsSerializer: {
     serialize: stringify as unknown as CustomParamsSerializer
@@ -36,7 +36,6 @@ class PureHttp {
     this.httpInterceptorsRequest();
     this.httpInterceptorsResponse();
   }
-
   /** token过期后，暂存待执行的请求 */
   private static requests = [];
 
@@ -85,21 +84,21 @@ class PureHttp {
                 const expired = parseInt(data.expires) - now <= 0;
                 if (expired) {
                   // todo token过期这里暂时没有用刷新token来处理
-                  // if (!PureHttp.isRefreshing) {
-                    // PureHttp.isRefreshing = true;
+                  if (!PureHttp.isRefreshing) {
+                    PureHttp.isRefreshing = true;
                     // token过期刷新
-                    // useUserStoreHook()
-                    //   .handRefreshToken({ refreshToken: data.refreshToken })
-                    //   .then(res => {
-                    //     const token = res.data.accessToken;
-                    //     config.headers["Authorization"] = formatToken(token);
-                    //     PureHttp.requests.forEach(cb => cb(token));
-                    //     PureHttp.requests = [];
-                    //   })
-                    //   .finally(() => {
-                    //     PureHttp.isRefreshing = false;
-                    //   });
-                  // }
+                    useUserStoreHook()
+                      .handRefreshToken({ refreshToken: data.refreshToken })
+                      .then(res => {
+                        const token = res.data.accessToken;
+                        config.headers["Authorization"] = formatToken(token);
+                        PureHttp.requests.forEach(cb => cb(token));
+                        PureHttp.requests = [];
+                      })
+                      .finally(() => {
+                        PureHttp.isRefreshing = false;
+                      });
+                  }
                   resolve(PureHttp.retryOriginalRequest(config));
                 } else {
                   config.headers["Authorization"] = formatToken(

@@ -28,7 +28,7 @@ const modulesRoutes = import.meta.glob("/src/views/**/*.{vue,tsx}");
 
 // 动态路由
 import { getAsyncRoutes } from "@/api/routes";
-import { getUserRoutes } from "@/api/user";
+// import { getUserRoutes } from "@/api/user";
 
 function handRank(routeInfo: any) {
   const { name, path, parentId, meta } = routeInfo;
@@ -203,13 +203,16 @@ function initRouter() {
       });
     }
   } else {
-    return new Promise(resolve => {
-      getUserRoutes().then(({ data }) => {
-        alert("请求完成");
-        console.log("请求路由接口完成", data);
-        handleAsyncRoutes(cloneDeep(data));
-        resolve(router);
-      });
+    return new Promise((resolve, reject) => {
+      getAsyncRoutes({})
+        .then(({ data }) => {
+          handleAsyncRoutes(cloneDeep(data));
+          resolve(router);
+        })
+        .catch(err => {
+          console.log(err, "请求出错");
+          reject(err);
+        });
     });
   }
 }

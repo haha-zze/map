@@ -1,8 +1,13 @@
-import { http } from "@/utils/http";
+import { http } from "@/utils/http/index";
 
 export type RegResult = {
   success: boolean;
   data: object;
+};
+
+type Result = {
+  success: boolean;
+  data: Array<any>;
 };
 
 export type UserResult = {
@@ -50,6 +55,6 @@ export const refreshTokenApi = (data?: object) => {
   });
 };
 
-export const getUserRoutes = () => {
-  return http.request("post", "/user/getAsyncRoutes");
+export const getUserRoutes = (data?: object) => {
+  return http.request<Result>("post", "/user/getAsyncRoutes", { data });
 };
